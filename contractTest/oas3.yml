@@ -1,0 +1,429 @@
+openapi: "3.0.1"
+
+info:
+  title: Bogus API
+  description: Contrived endpoints to demo Portman/Newman Contract Testing
+  version: "2024-01-05T06:40:44Z"
+
+servers:
+  - url: "https://741if7l9p3.execute-api.us-east-1.amazonaws.com/dev"
+
+tags:
+  - name: JwtAuth
+    description: Endpoints covered by Cognito Auth
+  - name: ApiKeyAuth
+    description: Endpoints covered by an APIKey
+  - name: ApiKeyAndJwtAuth
+    description: Endpoints covered by an APIKey while passing a JWT Authorization header as well
+
+paths:
+  /reflect:
+    post:
+      operationId: postReflect
+      summary: postReflect
+      description: Responds with the formatted value of a queryParam if set, otherwise just a default message.
+      tags:
+        - JwtAuth
+      parameters:
+        - in: query
+          name: name
+          required: false
+          schema:
+            type: string
+            example: Fred Flintstone
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/postReflectResponse"
+        $ref: "#/components/responses/fourXXFiveXXErrors"
+      security:
+        - bearerAuth: []
+    options:
+      operationId: postReflectOpts
+      summary: postReflectOpts
+      description: OPT headers for PostReflect
+      tags:
+        - JwtAuth
+      responses:
+        200:
+          description: OK
+          $ref: "#/components/responses/corsHeaderResponse"
+      security:
+        - bearerAuth: []
+  /self:
+    get:
+      operationId: getSelf
+      summary: getSelf
+      description: Parses JWT token and returns PII contained therein
+      tags:
+        - JwtAuth
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/getSelfResponse"
+        $ref: "#/components/responses/fourXXFiveXXErrors"
+      security:
+        - bearerAuth: []
+  /state/{userId}:
+    get:
+      operationId: getState
+      summary: getState
+      description: Gets bogus_state DDB records for userId key
+      tags:
+        - JwtAuth
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+            example: "{{userId}}"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/getStateResponse"
+        $ref: "#/components/responses/fourXXFiveXXErrors"
+      security:
+        - bearerAuth: []
+    post:
+      operationId: postState
+      summary: postState
+      description: Puts a record to bogus_state DDB records for userId key
+      tags:
+        - JwtAuth
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+            example: "{{userId}}"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/postStateRequest"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/getStateResponse"
+        $ref: "#/components/responses/fourXXFiveXXErrors"
+      security:
+        - bearerAuth: []
+    delete:
+      operationId: deleteState
+      summary: deleteState
+      description: Deletes all records in bogus_state DDB for userId key
+      tags:
+        - JwtAuth
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+            example: "{{userId}}"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                parameters:
+                  message: string
+                  example: "All Records Deleted for userId = {{userID}}"
+        $ref: "#/components/responses/fourXXFiveXXErrors"
+      security:
+        - bearerAuth: []
+  /user-by-id:
+    get:
+      operationId: getUserById
+      summary: getUserById
+      description: Responds with some Cognito data for a given userId
+      tags:
+        - ApiKeyAuth
+      parameters:
+        - in: query
+          name: poolId
+          required: true
+          schema:
+            type: string
+            example: "{{user_pool_id}}"
+        - in: query
+          name: userId
+          required: false
+          schema:
+            type: string
+            example: "{{userId}}"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                # Just for fun, this has two possible return shapes
+                # 1: Returns single object if userId passed and user is found
+                # 2: Return an "items" object with an empty array if userId passed and user not found
+                # 3: Return an "items" object with an array of existing users {items: [user]} if userId not passed
+                oneOf:
+                  - $ref: "#/components/schemas/getSelfResponse"
+                  - type: object
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/getSelfResponse"
+
+        $ref: "#/components/responses/fourXXFiveXXErrors"
+      security:
+        - apiKeyAuth: []
+  /user-by-jwt:
+    get:
+      operationId: getUserByJwt
+      summary: getUserByJwt
+      description: Responds with some Cognito data for a given sub value in the JWT
+      tags:
+        - ApiKeyAndJwtAuth
+      parameters:
+        - in: query
+          name: poolId
+          required: true
+          schema:
+            type: string
+            example: "{{user_pool_id}}"
+        - in: header
+          name: Authorization
+          description: In addition to main APIKey auth for this endpoint
+          required: true
+          schema:
+            type: string
+            example: "{{bearerToken}}"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/getSelfResponse"
+        $ref: "#/components/responses/fourXXFiveXXErrors"
+      security:
+        - apiKeyAuth: []
+        - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+    apiKeyAuth:
+      type: apiKey
+      name: x-api-key
+      in: header
+
+  responses:
+    corsHeaderResponse:
+      headers:
+        Access-Control-Allow-Origin:
+          schema:
+            type: string
+            example: "*"
+        Access-Control-Allow-Methods:
+          schema:
+            type: string
+            example: GET,OPTIONS,POST,PUT
+        Access-Control-Allow-Headers:
+          schema:
+            type: string
+            example: Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token
+      content: {}
+    badRequestError:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/errorResponse"
+
+    unauthorizedError:
+      description: User is not authorized to access this resource with an explicit deny
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/unauthorizedErrorResponse"
+
+    unauthenticatedError:
+      description: User is forbidden due to invalid credentials
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/unauthenticatedErrorResponse"
+
+    serverError:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/errorResponse"
+
+    fourXXFiveXXErrors:
+      400:
+        $ref: "#/components/responses/badRequestError"
+      401:
+        $ref: "#/components/responses/unauthorizedError"
+      403:
+        $ref: "#/components/responses/unauthenticatedError"
+      500:
+        $ref: "#/components/responses/serverError"
+
+  schemas:
+    emptyResponse:
+      title: Empty Response
+      description: Empty Response
+      type: object
+      example: {}
+
+    nullResponse:
+      title: Null Response
+      description: Null Response
+      type: "null"
+      example: null
+
+    errorResponse:
+      title: Error Response
+      description: Standard Error Response
+      type: object
+      properties:
+        code:
+          title: Error Code
+          description: Unique error code describing a known error condition
+          type: integer
+          minimum: 400
+          maximum: 511
+        message:
+          title: Error Message
+          description: Human-readable description of the problem
+          type: string
+
+    unauthorizedErrorResponse:
+      title: Unauthorized Error Response
+      description: Unauthorized Error Response
+      type: object
+      properties:
+        message:
+          title: Error Message
+          description: Unauthorized
+          type: string
+
+    unauthenticatedErrorResponse:
+      title: Unauthenticated Error Response
+      description: Unauthenticated Error Response
+      type: object
+      properties:
+        code:
+          title: Error Code
+          description: Unique error code describing a known error condition
+          type: integer
+          minimum: 0
+        message:
+          title: Error Message
+          description: User is not authorized to access this resource with an explicit deny
+          type: string
+        data:
+          title: Custom Error Data
+          description: Custom Error Data
+          type: object
+          properties:
+            customErrorCode:
+              title: Custom Error Code
+              description: Custom Error Code
+              type: string
+
+    getSelfResponse:
+      title: Get Self Response
+      description: Get Self Response
+      type: object
+      required:
+        - userId
+        - email
+        - firstName
+        - lastName
+      properties:
+        userId:
+          type: string
+          example: "12345678-feed-dead-beef-12345789abcd"
+        email:
+          type: string
+          format: email
+          example: jdoe@example.com
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Doe
+
+    postStateRequest:
+      title: Post State Request
+      description: Post State Request
+      type: object
+      properties:
+        stateName:
+          type: string
+          example: BogusStateName
+      required:
+        - stateName
+
+    deleteStateRequest:
+      title: Delete State Request
+      description: Delete State Request
+      type: object
+      properties:
+        stateName:
+          type: string
+          example: TheStateToDelete
+      required:
+        - stateName
+
+    getStateResponse:
+      title: Get State Response
+      description: Get State Response
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            required:
+              - userId
+              - stateName
+            properties:
+              userId:
+                type: string
+                example: "12345678-feed-dead-beef-12345789abcd"
+              stateName:
+                type: string
+                example: BogusStateName
+
+    postReflectResponse:
+      title: PostReflect Response
+      description: PostReflect Response
+      type: object
+      properties:
+        message:
+          type: string
+          example: Hello, Person

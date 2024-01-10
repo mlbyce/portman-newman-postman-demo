@@ -1,0 +1,185 @@
+version: 1
+tests:
+  contractTests:
+    - openApiOperationIds:
+        - getSelf
+        - postReflect
+        - postReflectOpts
+        - getUserByJwt
+      $ref: "./portman-ref.yml#/contractProps"
+  contentTests: []
+  extendTests: []
+  integrationTests:
+    - name: State CRUD
+      operations:
+        - openApiOperationId: getState
+          variations:
+            - name: State Starts Out Clear For UserId
+              tests:
+                $ref: "./portman-ref.yml#/variationContractProps"
+                contentTests:
+                  - responseBodyTests:
+                      - key: items
+                        length: 0
+        - openApiOperationId: postState
+          variations:
+            - name: Write First State For UserId
+              tests:
+                $ref: "./portman-ref.yml#/variationContractProps"
+                contentTests:
+                  - responseBodyTests:
+                      - key: Overwritten
+                        assert: not.to.be.undefined
+                      - key: Overwritten.stateName
+                        notExist: true
+            - name: Write Second State For UserId
+              overwrites:
+                - overwriteRequestBody:
+                    - key: stateName
+                      value: AnotherBogusStateName
+              tests:
+                $ref: "./portman-ref.yml#/variationContractProps"
+                contentTests:
+                  - responseBodyTests:
+                      - key: Overwritten
+                        assert: not.to.be.undefined
+                      - key: Overwritten.stateName
+                        notExist: true
+        - openApiOperationId: getState
+          variations:
+            - name: Two States Were Written
+              tests:
+                $ref: "./portman-ref.yml#/variationContractProps"
+                contentTests:
+                  - responseBodyTests:
+                      - key: items
+                        length: 2
+                      - key: items[0].stateName
+                        value: BogusStateName
+                      - key: items[1].stateName
+                        value: AnotherBogusStateName
+        - openApiOperationId: deleteState
+          variations:
+            - name: State Is Nuked For UserId
+              tests:
+                $ref: "./portman-ref.yml#/variationContractProps"
+                contentTests:
+                  - responseBodyTests:
+                      - key: message
+                        contains: All Records Deleted for userId
+        - openApiOperationId: getState
+          variations:
+            - name: Final State Is Empty For UserId
+              tests:
+                $ref: "./portman-ref.yml#/variationContractProps"
+                contentTests:
+                  - responseBodyTests:
+                      - key: items
+                        length: 0
+  variationTests:
+    - openApiOperation: "*::/*"
+      excludeForOperations: [getUserById, getUserByJwt]
+      variations:
+        - name: Unauthorized
+          overwrites:
+            - overwriteRequestSecurity:
+                bearer:
+                  token: bogus_token
+          tests:
+            $ref: "./portman-ref.yml#/statusCodes/status401"
+        - name: ExpiredToken Forbidden
+          overwrites:
+            - overwriteRequestSecurity:
+                bearer:
+                  token: "{{expiredBearerToken}}"
+          tests:
+            extendTests:
+              - $ref: "./portman-ref.yml#/extendTests/serverError401_403"
+            contentTests:
+              - responseBodyTests:
+                  - key: message
+                    value: "The incoming token has expired"
+    - openApiOperationId: "postReflect"
+      variations:
+        - name: Content with name set
+          tests:
+            contentTests:
+              - responseBodyTests:
+                  - key: message
+                    value: "Hello, Fred Flintstone!"
+        - name: Content with name not set
+          overwrites:
+            - overwriteRequestQueryParams:
+                - key: name
+                  disable: true
+          tests:
+            contentTests:
+              - responseBodyTests:
+                  - key: message
+                    value: "Hello, NoName Person!"
+    - openApiOperationId: "postReflectOpts"
+      variations:
+        - name: Returns null response
+          tests:
+            $ref: "./portman-ref.yml#/nullBodyVariationProps"
+    - openApiOperationId: "getUserById"
+      variations:
+        - name: PoolId Not Set
+          overwrites:
+            - overwriteRequestQueryParams:
+                - key: poolId
+                  disable: true
+          tests:
+            $ref: "./portman-ref.yml#/statusCodes/status400"
+            extendTests:
+              - $ref: "./portman-ref.yml#/extendTests/poolIdMissing"
+        - name: UserId Not Set
+          overwrites:
+            - overwriteRequestQueryParams:
+                - key: userId
+                  disable: true
+          tests:
+            contentTests:
+              - responseBodyTests:
+                  - key: items
+                    minLength: 1
+        - name: UserId Found
+          overwrites:
+            - overwriteRequestQueryParams:
+                - key: userId
+                  disable: false
+                  value: "{{userId}}"
+          tests:
+            $ref: "./portman-ref.yml#/userObjectBodyVariationProps"
+        - name: UserId Not Found
+          overwrites:
+            - overwriteRequestQueryParams:
+                - key: userId
+                  disable: false
+                  value: NO_WAY_IS_THIS_FOUND
+          tests:
+            $ref: "./portman-ref.yml#/emptyItemsArrayBodyVariationProps"
+    - openApiOperationId: "getUserByJwt"
+      variations:
+        - name: PoolId Not Set
+          overwrites:
+            - overwriteRequestQueryParams:
+                - key: poolId
+                  disable: true
+          tests:
+            $ref: "./portman-ref.yml#/statusCodes/status400"
+            extendTests:
+              - $ref: "./portman-ref.yml#/extendTests/poolIdRequired"
+        - name: Authorization Header Not Set
+          overwrites:
+            - overwriteRequestHeaders:
+                - key: Authorization
+                  disable: true
+          tests:
+            $ref: "./portman-ref.yml#/statusCodes/status400"
+            extendTests:
+              - $ref: "./portman-ref.yml#/extendTests/authHeaderRequired"
+assignVariables: []
+overwrites: []
+globals:
+  $ref: "./portman-ref.yml#/globalProps"

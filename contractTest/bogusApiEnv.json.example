@@ -1,0 +1,53 @@
+{
+	"name": "TEST_BogusAPI",
+	"values": [
+		{
+			"key": "apiKey",
+			"value": "<API_KEY>",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "baseUrl",
+			"value": "<BASE_URL>",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "user_pool_id",
+			"value": "<USER_POOL_ID>",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "user_pool_client_id",
+			"value": "<USER_POOL_CLIENT_ID>",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "username",
+			"value": "<USER_EMAIL>",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "password",
+			"value": "<USER_PASSWORD>",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "aws_region",
+			"value": "us-east-1",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "expiredBearerToken",
+			"value": "<EXPIRED_TOKEN>",
+			"type": "default",
+			"enabled": true
+		}
+	]
+}

@@ -1,0 +1,145 @@
+statusCodes:
+  status400:
+    contractTests:
+      - statusCode:
+          enabled: true
+          code: 400
+  status401:
+    contractTests:
+      - statusCode:
+          enabled: true
+          code: 401
+  status403:
+    contractTests:
+      - statusCode:
+          enabled: true
+          code: 403
+
+contractProps:
+  statusSuccess:
+    enabled: true
+  contentType:
+    enabled: true
+  jsonBody:
+    enabled: true
+  schemaValidation:
+    enabled: true
+  headersPresent:
+    enabled: true
+
+variationContractProps:
+  contractTests:
+    - statusSuccess:
+        enabled: true
+    - contentType:
+        enabled: true
+    - jsonBody:
+        enabled: true
+    - schemaValidation:
+        enabled: true
+    - headersPresent:
+        enabled: true
+
+userObjectBodyVariationProps:
+  contractTests:
+    - statusSuccess:
+        enabled: true
+    - contentType:
+        enabled: true
+    - jsonBody:
+        enabled: true
+  contentTests:
+    - responseBodyTests:
+        - key: userId
+          length: 36
+        - key: firstName
+          minLength: 1
+        - key: lastName
+          minLength: 1
+        - key: email
+          contains: "@"
+        - key: email
+          contains: "."
+        - key: email
+          minLength: 5
+
+emptyItemsArrayBodyVariationProps:
+  contractTests:
+    - statusSuccess:
+        enabled: true
+    - contentType:
+        enabled: true
+    - jsonBody:
+        enabled: true
+    - schemaValidation:
+        enabled: true
+    - headersPresent:
+        enabled: true
+  contentTests:
+    - responseBodyTests:
+        - key: items
+          length: 0
+
+emptyArrayBodyVariationProps:
+  contractTests:
+    - statusSuccess:
+        enabled: true
+    - contentType:
+        enabled: true
+    - jsonBody:
+        enabled: true
+    - schemaValidation:
+        enabled: true
+    - headersPresent:
+        enabled: true
+  extendTests:
+    - tests:
+        - |-
+          var jsonResponse = JSON.parse(responseBody);
+          pm.test("Body is zero-length array", () => {
+            pm.expect(jsonResponse.length).to.eq(0)
+          });
+
+nullBodyVariationProps:
+  contractTests:
+    - statusSuccess:
+        enabled: true
+    - contentType:
+        enabled: true
+    - headersPresent:
+        enabled: true
+  extendTests:
+    - tests:
+        - pm.test("Body is NULL", () => pm.expect(pm.response.responseSize).to.eq(0));
+
+extendTests:
+  authHeaderRequired:
+    tests:
+      - |-
+        pm.test("Body matches string", function () {
+          pm.expect(pm.response.text()).to.include("Error: Authorization header is required");
+        });
+  poolIdRequired:
+    tests:
+      - |-
+        pm.test("Body matches string", function () {
+          pm.expect(pm.response.text()).to.include("Error: poolId is required");
+        });
+  poolIdMissing:
+    tests:
+      - |-
+        pm.test("Body matches string", function () {
+          pm.expect(pm.response.text()).to.include("Error: poolId is required");
+        });
+  serverError401_403:
+    tests:
+      - |-
+        pm.test("Response status code is 401 or 403", () => pm.expect(pm.response.code == 401 || pm.response.code == 403).to.be.true);
+
+globalProps:
+  stripResponseExamples: true
+  collectionPreRequestScripts: []
+  keyValueReplacements: {}
+  valueReplacements: {}
+  rawReplacements: []
+  orderOfOperations: []

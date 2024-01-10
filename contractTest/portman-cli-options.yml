@@ -1,0 +1,14 @@
+local: ./oas3.yml
+baseUrl: https://9poz3d7p37.execute-api.us-east-1.amazonaws.com/dev
+output: ./bogusApiExec.json
+# The environment is passed in via portman cli options and based on ENV so this is not used
+# envFile: <TheEnvFile>
+portmanConfigFile: ./portman-config.yml
+filterFile: ./portman-filter.yml
+postmanConfigFile: ./postman-config.json
+includeTests: true
+bundleContractTests: true
+syncPostman: false
+syncPostmanCollectionIds: false
+runNewman: false
+collectionName: "Bogus API Test"

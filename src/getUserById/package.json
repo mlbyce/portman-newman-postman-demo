@@ -1,0 +1,7 @@
+{
+  "name": "getUserById",
+  "main": "index.js",
+  "dependencies": {
+    "@aws-sdk/client-cognito-identity-provider": "^3.485.0"
+  }
+}

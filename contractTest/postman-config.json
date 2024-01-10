@@ -1,0 +1,15 @@
+{
+  "requestNameSource": "Fallback",
+  "indentCharacter": "Space",
+  "collapseFolders": true,
+  "requestParametersResolution": "Example",
+  "exampleParametersResolution": "Example",
+  "folderStrategy": "Tags",
+  "schemaFaker": false,
+  "includeAuthInfoInExample": true,
+  "shortValidationErrors": false,
+  "validationPropertiesToIgnore": [],
+  "showMissingInSchemaErrors": true,
+  "detailedBlobValidation": false,
+  "keepImplicitHeaders": true
+}
