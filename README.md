@@ -1,6 +1,6 @@
 # Portman / Newman Demo
 
-A Demo/Tutorial on the use of Portman/Newman to create tests from OAS3 documents with live Terraform stack for hands-on experience. 
+A Demo/Tutorial on the use of Portman/Newman to create tests from OAS3 documents with live Terraform stack for hands-on experience.
 
 For reference:
 
@@ -76,7 +76,7 @@ PASSWORD=<USER_PASSWORD>
 
 You need at least one CONFIRMED user to run with a `<USER_EMAIL>` and `<USER_PASSWORD>` to plug into your configured `devBogusApiEnv.json`.
 
-To create that main user, and maybe a few more if you are experimenting, run the [userCreate.sh](./userCreate.sh) script. It uses `aws cognito-idp admin-*` commands to create / delete users... Of course, if you have a better/favorite way to accomplish this, knock yourself out 😊
+To create that main user, and maybe a few more if you are experimenting, run the [userCreate.sh](contractTest/userCreate.sh) script. It uses `aws cognito-idp admin-*` commands to create / delete users... Of course, if you have a better/favorite way to accomplish this, knock yourself out 😊
 
 As an example to create 4 users with these names (emails) and all having the same password...
 
