@@ -1,20 +1,26 @@
 version: 1
 tests:
   contractTests:
-    - openApiOperationIds:
-        - getSelf
-        - postReflect
-        - postReflectOpts
-        - getUserByJwt
+    - openApiOperation: "*::/*"
+      excludeForOperations: [getUserById]
       $ref: "./portman-ref.yml#/contractProps"
   contentTests: []
   extendTests: []
   integrationTests:
     - name: State CRUD
       operations:
+        - openApiOperationId: deleteState
+          variations:
+            - name: Force Cleared State
+              tests:
+                $ref: "./portman-ref.yml#/variationContractProps"
+                contentTests:
+                  - responseBodyTests:
+                      - key: message
+                        contains: All Records Deleted for userId =
         - openApiOperationId: getState
           variations:
-            - name: State Starts Out Clear For UserId
+            - name: Verify Cleared State
               tests:
                 $ref: "./portman-ref.yml#/variationContractProps"
                 contentTests:
@@ -66,7 +72,7 @@ tests:
                 contentTests:
                   - responseBodyTests:
                       - key: message
-                        contains: All Records Deleted for userId
+                        contains: All Records Deleted for userId =
         - openApiOperationId: getState
           variations:
             - name: Final State Is Empty For UserId
@@ -98,15 +104,15 @@ tests:
             contentTests:
               - responseBodyTests:
                   - key: message
-                    value: "The incoming token has expired"
-    - openApiOperationId: "postReflect"
+                    value: The incoming token has expired
+    - openApiOperationId: postReflect
       variations:
         - name: Content with name set
           tests:
             contentTests:
               - responseBodyTests:
                   - key: message
-                    value: "Hello, Fred Flintstone!"
+                    value: Hello, Fred Flintstone!
         - name: Content with name not set
           overwrites:
             - overwriteRequestQueryParams:
@@ -116,13 +122,13 @@ tests:
             contentTests:
               - responseBodyTests:
                   - key: message
-                    value: "Hello, NoName Person!"
-    - openApiOperationId: "postReflectOpts"
+                    value: Hello, NoName Person!
+    - openApiOperationId: postReflectOpts
       variations:
         - name: Returns null response
           tests:
             $ref: "./portman-ref.yml#/nullBodyVariationProps"
-    - openApiOperationId: "getUserById"
+    - openApiOperationId: getUserById
       variations:
         - name: PoolId Not Set
           overwrites:
@@ -159,7 +165,7 @@ tests:
                   value: NO_WAY_IS_THIS_FOUND
           tests:
             $ref: "./portman-ref.yml#/emptyItemsArrayBodyVariationProps"
-    - openApiOperationId: "getUserByJwt"
+    - openApiOperationId: getUserByJwt
       variations:
         - name: PoolId Not Set
           overwrites:
@@ -179,6 +185,19 @@ tests:
             $ref: "./portman-ref.yml#/statusCodes/status400"
             extendTests:
               - $ref: "./portman-ref.yml#/extendTests/authHeaderRequired"
+    - openApiOperationId: deleteState
+      variations:
+        - name: Targets userId PathParam
+          overwrites:
+            - overwriteRequestPathVariables:
+                - key: userId
+                  value: BogusUserId
+          tests:
+            $ref: "./portman-ref.yml#/variationContractProps"
+            contentTests:
+              - responseBodyTests:
+                  - key: message
+                    value: All Records Deleted for userId = BogusUserId
 assignVariables: []
 overwrites: []
 globals:
