@@ -40,7 +40,7 @@ fi
 
 BEARER_TOKEN=$(jq '.values | map(select(.key == "bearerToken"))[0].value' < $ENVFILE | sed 's/\"//g')
 
-if [[ -z $BEARER_TOKEN ]]; then
+if [[ -z $BEARER_TOKEN || $BEARER_TOKEN == "null" ]]; then
   printf "\n\033[31mFailed to generate an AuthToken for this test run.\033[0m\n";
   exit 1;
 fi
