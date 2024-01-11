@@ -1,8 +1,13 @@
 {
-  "name": "getUserByJwt",
+  "name": "get_user_by_jwt",
   "main": "index.js",
   "dependencies": {
     "@aws-sdk/client-cognito-identity-provider": "^3.485.0",
+    "@types/aws-lambda": "^8.10.131",
+    "esbuild": "^0.19.11",
     "jwt-decode": "^4.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
   }
 }

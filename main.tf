@@ -166,42 +166,42 @@ resource "aws_lambda_permission" "apigw_lambda_deleteState" {
 
 data "archive_file" "postReflect_package" {
   type        = "zip"
-  source_file = "src/postReflect/index.js"
+  source_file = "src/postReflect/dist/index.js"
   output_path = "postReflectIndex.zip"
 }
 
 data "archive_file" "getSelf_package" {
   type        = "zip"
-  source_dir  = "src/getSelf/"
+  source_file  = "src/getSelf/dist/index.js"
   output_path = "getSelfIndex.zip"
 }
 
 data "archive_file" "getUserById_package" {
   type        = "zip"
-  source_dir  = "src/getUserById/"
+  source_file = "src/getUserById/dist/index.js"
   output_path = "getUserByIdIndex.zip"
 }
 
 data "archive_file" "getUserByJwt_package" {
   type        = "zip"
-  source_dir  = "src/getUserByJwt/"
+  source_file = "src/getUserByJwt/dist/index.js"
   output_path = "getUserByJwtIndex.zip"
 }
 
 data "archive_file" "getState_package" {
   type        = "zip"
-  source_dir  = "src/getState/"
+  source_file = "src/getState/dist/index.js"
   output_path = "getStateIndex.zip"
 }
 
 data "archive_file" "postState_package" {
   type        = "zip"
-  source_dir  = "src/postState/"
+  source_file = "src/postState/dist/index.js"
   output_path = "postStateIndex.zip"
 }
 
 data "archive_file" "deleteState_package" {
   type        = "zip"
-  source_dir  = "src/deleteState/"
+  source_file  = "src/deleteState/dist/index.js"
   output_path = "deleteStateIndex.zip"
 }

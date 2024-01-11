@@ -1,9 +1,10 @@
-const jwt = require("jwt-decode");
+import { jwtDecode } from 'jwt-decode';
+import { APIGatewayEvent } from 'aws-lambda'
 
-module.exports.handler = async (event) => {
+module.exports.handler = async (event: APIGatewayEvent) => {
     console.log('Event: ', JSON.stringify(event));
 
-    const userData = jwt.jwtDecode((event.headers.Authorization).split(' ')[1]);
+    const userData = jwtDecode<any>((event.headers.Authorization!).split(' ')[1]);
 
     const response = {
         statusCode: 200,

@@ -1,8 +1,9 @@
-const aws = require('@aws-sdk/client-cognito-identity-provider');
+import {CognitoIdentityProviderClient, ListUsersCommand, UserType}  from '@aws-sdk/client-cognito-identity-provider';
+import { APIGatewayEvent } from 'aws-lambda'
 
-const transformUsers = (userData) => {
-    const users = userData.map((u) => { 
-        const user = u.Attributes.reduce((acc, cur) => {
+const transformUsers = (userData: UserType[] | undefined) => {
+    const users = userData!.map((u:any) => { 
+        const user = u.Attributes.reduce((acc: any, cur: any) => {
             switch (cur.Name) {
                 case 'sub': return {...acc, userId: cur.Value};
                 case 'given_name': return {...acc, firstName: cur.Value};
@@ -16,7 +17,7 @@ const transformUsers = (userData) => {
     return users;
 }
 
-exports.handler = async (event) => {
+exports.handler = async (event: APIGatewayEvent) => {
     console.log('Event: ', JSON.stringify(event));
 
     try {
@@ -26,9 +27,9 @@ exports.handler = async (event) => {
         const poolId = event.queryStringParameters['poolId'];
         const userId = event.queryStringParameters['userId'];
 
-        const getUsers = async (poolId, userId ) => {
-            const client = new aws.CognitoIdentityProviderClient({ region: process.env.AWS_REGION });
-            return client.send(new aws.ListUsersCommand({
+        const getUsers = async (poolId: string, userId: string | undefined) => {
+            const client = new CognitoIdentityProviderClient({ region: process.env.AWS_REGION });
+            return client.send(new ListUsersCommand({
             UserPoolId: poolId,
             Filter: userId ? `sub^="${userId}"` : undefined,
             }));

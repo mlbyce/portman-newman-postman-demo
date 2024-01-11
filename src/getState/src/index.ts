@@ -1,23 +1,24 @@
-const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
-const { DynamoDBDocumentClient, QueryCommand } = require('@aws-sdk/lib-dynamodb');
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
+import  { DynamoDBDocumentClient, QueryCommand, QueryCommandInput } from '@aws-sdk/lib-dynamodb';
+import { APIGatewayEvent } from 'aws-lambda'
 
-const getDdbDocClient = (clientIn) => {
-  if (clientIn) return clientIn;
+const getDdbDocClient = (clientIn?: DynamoDBDocumentClient ) : DynamoDBDocumentClient => {
+if (clientIn) return clientIn;
 
-  const ddbClient = new DynamoDBClient({});
-  const marshallOptions = { removeUndefinedValues: true, convertClassInstanceToMap: true };
-  const translateConfig = { marshallOptions };
-  return DynamoDBDocumentClient.from(ddbClient, translateConfig);
+const ddbClient = new DynamoDBClient({});
+const marshallOptions = { removeUndefinedValues: true, convertClassInstanceToMap: true };
+const translateConfig = { marshallOptions };
+return DynamoDBDocumentClient.from(ddbClient, translateConfig);
 };
 
-module.exports.handler = async (event) => {
+module.exports.handler = async (event: APIGatewayEvent) => {
     try {
         console.log('Event: ', JSON.stringify(event));
 
         const ddbClient = getDdbDocClient();
 
-        const userId = event.pathParameters.userId;
-        const params = {
+        const userId = event.pathParameters?.userId;
+        const params: QueryCommandInput = {
             KeyConditionExpression: 'userId = :userId',
             ExpressionAttributeValues: { ':userId': userId },
             TableName: process.env.DDB_TABLE,

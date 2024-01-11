@@ -39,6 +39,9 @@ terraform.rc
 *.zip
 **/node_modules
 **/yarn.lock
+**/package-lock.json
+**/dist
+**/*.js
 contractTest/*ApiEnv.json
 contractTest/*ApiExec.json
 contractTest/*EnvOut.json

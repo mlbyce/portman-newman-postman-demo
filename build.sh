@@ -3,9 +3,15 @@ set -e
 
 for i in $(find . -type f -not -path "*/\.git/*" -not -path "*node_modules*" | grep package.json); do
     echo $i;
-    cd $(dirname $i);
+    pushd $(dirname $i);
     yarn;
-    cd -;
+    tsc;
+    cp -r node_modules dist;
+    cd dist;
+    esbuild --bundle --platform=node index.js --outfile=out.js;
+    rm -rf node_modules;
+    mv out.js index.js
+    popd;
 done;
 
 terraform init

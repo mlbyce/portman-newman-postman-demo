@@ -1,7 +1,8 @@
-const { DynamoDBClient, BatchWriteItemCommand } = require('@aws-sdk/client-dynamodb');
-const { DynamoDBDocumentClient, QueryCommand } = require('@aws-sdk/lib-dynamodb');
+import  { DynamoDBClient, BatchWriteItemCommand } from '@aws-sdk/client-dynamodb';
+import  { DynamoDBDocumentClient, QueryCommand } from '@aws-sdk/lib-dynamodb';
+import { APIGatewayEvent } from 'aws-lambda'
 
-const getDdbDocClient = (clientIn) => {
+const getDdbDocClient = (clientIn?: DynamoDBDocumentClient ) : DynamoDBDocumentClient => {
 if (clientIn) return clientIn;
 
 const ddbClient = new DynamoDBClient({});
@@ -10,7 +11,7 @@ const translateConfig = { marshallOptions };
 return DynamoDBDocumentClient.from(ddbClient, translateConfig);
 };
 
-const formatResponse = (userId) => {
+const formatResponse = (userId: string) => {
     return {
         statusCode: 200,
         headers: {
@@ -20,14 +21,14 @@ const formatResponse = (userId) => {
     };
 }
 
-module.exports.handler = async (event) => {
+module.exports.handler = async (event: APIGatewayEvent) => {
     try {
         console.log('Event: ', JSON.stringify(event));
 
         const ddbClient = getDdbDocClient();
 
-        const userId = event.pathParameters.userId;
-        const table = process.env.DDB_TABLE;
+        const userId = event.pathParameters?.userId || '';
+        const table = process.env.DDB_TABLE!;
         const queryParams = {
             KeyConditionExpression: 'userId = :userId',
             ExpressionAttributeValues: { ':userId': userId },

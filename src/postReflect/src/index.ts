@@ -1,4 +1,6 @@
-exports.handler = async (event) => {
+import { APIGatewayEvent } from 'aws-lambda'
+
+exports.handler = async (event: APIGatewayEvent) => {
     console.log('Event: ', event);
     let responseMessage = 'Hello, NoName Person!';
   
