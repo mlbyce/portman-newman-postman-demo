@@ -133,7 +133,9 @@ There are three files that are generated or manually created that fully define t
 
 ## Early Warning Of Expected Failing Tests:
 
-You will most likely see 6 failed tests when you run entire test collection with Postman or Newman. This is is because each of the endpoints that is covered by a Cognito JWT Authorization has an associated test to see that a "Token Is Expired" error happens when a token is actually expired. There is is a bit of chicken-an-egg problem here in that the token that is tested must be a token that originates on the Cognito UserPool/Client that was created in the initial deploy of this stack in your AWS account. So, in order to create an expired token for the 6 tests to pass, you have to first plug a valid JWT `{{bearerToken}}` value from either the `TEST_BogusAPI` environment (when running tests in Postman) or the `devEnvOut.json` file (when running tests with Newman) into the `<EXPIRED_TOKEN>` value for the `expiredBearerToken` key in the same `TEST_BogusAPI` / `devEnvOut.json`.
+You will most likely see 6 failed tests when you run entire test collection with Postman or Newman. This is is because each of the endpoints that is covered by a Cognito JWT Authorization has an associated test to see that a "Token Is Expired" error happens when a token is actually expired. There is is a bit of chicken-an-egg problem here in that the token that is tested must be a token that originates on the Cognito UserPool/Client that was created in the initial deploy of this stack in your AWS account.
+
+So, in order to create an expired token for the 6 tests to pass, you have to first plug a valid JWT `{{bearerToken}}` value from either the `TEST_BogusAPI` environment (when running tests in Postman) or the `devEnvOut.json` file (when running tests with Newman) into the `<EXPIRED_TOKEN>` value for the `expiredBearerToken` key in `devBogusApiEnv.json`.
 
 But this can only happen after an initial test run has been executed. And the test will continue to fail until the token that was initially created actually expires at exactly one hour after first `{{bearerToken}}` was created.
 
