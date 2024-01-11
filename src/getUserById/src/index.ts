@@ -17,7 +17,7 @@ const transformUsers = (userData: UserType[] | undefined) => {
     return users;
 }
 
-exports.handler = async (event: APIGatewayEvent) => {
+export const handler = async (event: APIGatewayEvent) => {
     console.log('Event: ', JSON.stringify(event));
 
     try {

@@ -1,7 +1,7 @@
 import { jwtDecode } from 'jwt-decode';
 import { APIGatewayEvent } from 'aws-lambda'
 
-module.exports.handler = async (event: APIGatewayEvent) => {
+export const handler = async (event: APIGatewayEvent) => {
     console.log('Event: ', JSON.stringify(event));
 
     const userData = jwtDecode<any>((event.headers.Authorization!).split(' ')[1]);

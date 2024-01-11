@@ -21,7 +21,7 @@ const formatResponse = (userId: string) => {
     };
 }
 
-module.exports.handler = async (event: APIGatewayEvent) => {
+export const handler = async (event: APIGatewayEvent) => {
     try {
         console.log('Event: ', JSON.stringify(event));
 

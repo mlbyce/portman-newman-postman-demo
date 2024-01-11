@@ -11,7 +11,7 @@ const translateConfig = { marshallOptions };
 return DynamoDBDocumentClient.from(ddbClient, translateConfig);
 };
 
-module.exports.handler = async (event: APIGatewayEvent) => {
+export const handler = async (event: APIGatewayEvent) => {
     try {
         console.log('Event: ', JSON.stringify(event));
 
