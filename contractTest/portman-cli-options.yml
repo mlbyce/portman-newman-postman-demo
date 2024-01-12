@@ -1,5 +1,5 @@
 local: ./oas3.yml
-baseUrl: https://p74xtzo4ng.execute-api.us-east-1.amazonaws.com/dev
+baseUrl: https://pddae1pl4i.execute-api.us-east-1.amazonaws.com/dev
 output: ./bogusApiExec.json
 # The environment is passed in via portman cli options and based on ENV so this is not used
 # envFile: <TheEnvFile>

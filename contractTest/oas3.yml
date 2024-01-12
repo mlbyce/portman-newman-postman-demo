@@ -252,6 +252,7 @@ components:
             type: string
             example: Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token
       content: {}
+
     badRequestError:
       description: Bad Request
       content:
