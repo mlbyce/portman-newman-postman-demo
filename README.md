@@ -71,6 +71,7 @@ For future convenience, set these environment variables:
 
 ```
 USER_POOL_ID=<USER_POOL_ID>
+USER_POOL_CLIENT_ID=<USER_POOL_CLIENT_ID>
 PASSWORD=<USER_PASSWORD>
 ```
 
@@ -88,19 +89,19 @@ As an example to create 4 users with these names (emails) and all having the sam
 Execute this command:
 
 ```
-./userCreate.sh -u $USER_POOL_ID -p $PASSWORD -c 4
+./userCreate.sh -c $USER_POOL_CLIENT_ID -u $USER_POOL_ID -p $PASSWORD -n 4
 ```
 
 Then to delete only `bogus2@user2.com` and `bogus3@user3.com`, (note the -d parameter) enter:
 
 ```
-./userCreate.sh -u $USER_POOL_ID -c 2 -s 2 -d
+./userCreate.sh -c $USER_POOL_CLIENT_ID -u $USER_POOL_ID -n 2 -s 2 -d
 ```
 
 If you want to have a different name say, Joe[1234] Cool[1234] (joe[1234]@cool[1234].com), supply -f and -l
 
 ```
-./userCreate.sh -u $USER_POOL_ID -p $PASSWORD -c 4 -f Joe -l Cool
+./userCreate.sh -c $USER_POOL_CLIENT_ID -u $USER_POOL_ID -p $PASSWORD -n 4 -f Joe -l Cool
 ```
 
 ## Run The Tests:
