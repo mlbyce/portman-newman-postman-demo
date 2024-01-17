@@ -179,6 +179,6 @@ When you are all done having fun with this stack, remember to destroy the lot wi
 
 ```
 # From the root directory
-# Note that the region and stage variables are required if other than the default (us-east-1 / dev)
-terraform destroy -var region=${REGION} -var stage=${STAGE} --auto-approve
+# Note that the region variable is required if deployed to any region other than the default (us-east-1)
+terraform destroy -var region=${REGION}
 ```
