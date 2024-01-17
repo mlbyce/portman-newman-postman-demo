@@ -20,9 +20,6 @@ function usage() {
 #DEFAULTS:
 REGION=us-east-1
 
-echo "STAGE = $STAGE"
-echo "REGION = $REGION"
-
 while getopts ahr:s:t option
 do
   case "${option}" in
@@ -34,6 +31,9 @@ do
 
   esac
 done
+
+echo "STAGE = $STAGE"
+echo "REGION = $REGION"
 
 if [[ -z $STAGE || $HELP ]]; then
     usage;
