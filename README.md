@@ -37,13 +37,12 @@ To run this demo, first deploy the 'Bogus API' with the following process, using
   This script builds the Lambdas an executes the Terraform steps to deploy but prompts the user for the final "yes"
   unless you enter the "-a" commandLine option. The only required option is "-s <STAGE>"... here is the full list of options:
 
-  ./build.sh -s \<STAGE\> -r \<REGION\> -t -a -h
+  ./build.sh -s \<STAGE\> -r \<REGION\> -t -a
 
   - -s is the deployment stage: REQUIRED (e.g. -s dev)
   - -r is the deployment region: Default = us-east-1
   - -t Build Terraform only (No src build): Default = Build all
   - -a turns on auto-approve for Terraform Apply: Default = No auto-approve
-  - -h Returns this help message
 
   So for a normal deployment to **dev**,
 

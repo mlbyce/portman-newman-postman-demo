@@ -13,18 +13,16 @@ function usage() {
     warn "     Default = Build all"
     warn "  -a turns on auto-approve for Terraform Apply"
     warn "     Default = No auto-approve"
-    warn "  -h Returns this help message"
     exit 1;
 }
 
 #DEFAULTS:
 REGION=us-east-1
 
-while getopts ahr:s:t option
+while getopts ar:s:t option
 do
   case "${option}" in
     a) AUTO="--auto-approve" ;;
-    h) HELP=1 ;;
     r) REGION=${OPTARG} ;;
     s) STAGE=${OPTARG} ;;
     t) NOCODEBUILD=1 ;;
@@ -35,7 +33,7 @@ done
 echo "STAGE = $STAGE"
 echo "REGION = $REGION"
 
-if [[ -z $STAGE || $HELP ]]; then
+if [[ -z $STAGE ]]; then
     usage;
 fi
 
