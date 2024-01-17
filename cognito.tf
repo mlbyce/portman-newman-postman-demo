@@ -1,9 +1,9 @@
 resource "aws_cognito_user_pool" "pool" {
-  name = "contractTestPool"
+  name = "contractTestPool-${var.stage}-${random_string.seed.id}"
 }
 
 resource "aws_cognito_user_pool_client" "client" {
-  name                                 = "client"
+  name                                 = "ctpClient-${var.stage}-${random_string.seed.id}"
   allowed_oauth_flows_user_pool_client = true
   generate_secret                      = false
   allowed_oauth_scopes                 = ["aws.cognito.signin.user.admin", "email", "openid", "profile"]

@@ -1,5 +1,5 @@
 resource "aws_api_gateway_rest_api" "bogus_api" {
-  name        = "bogus_api"
+  name        = "bogus_api-${var.stage}-${random_string.seed.id}"
   description = "Bogus API Gateway"
 
   endpoint_configuration {
@@ -8,18 +8,18 @@ resource "aws_api_gateway_rest_api" "bogus_api" {
 }
 
 resource "aws_api_gateway_authorizer" "jwt" {
-  name          = "bogus_api_jwt_auth"
+  name          = "bogus_api_jwt_auth-${var.stage}-${random_string.seed.id}"
   rest_api_id   = aws_api_gateway_rest_api.bogus_api.id
   type          = "COGNITO_USER_POOLS"
   provider_arns = [aws_cognito_user_pool.pool.arn]
 }
 
 resource "aws_api_gateway_api_key" "apikey" {
-  name = "bogus_api_key_auth"
+  name = "bogus_api_key_auth-${var.stage}-${random_string.seed.id}"
 }
 
 resource "aws_api_gateway_usage_plan" "apikey" {
-  name = "bogus_api_usage_plan"
+  name = "bogus_api_usage_plan-${var.stage}-${random_string.seed.id}"
   api_stages {
     api_id = aws_api_gateway_rest_api.bogus_api.id
     stage  = aws_api_gateway_stage.lambda.stage_name
@@ -286,5 +286,5 @@ resource "aws_api_gateway_deployment" "deployment" {
 resource "aws_api_gateway_stage" "lambda" {
   deployment_id = aws_api_gateway_deployment.deployment.id
   rest_api_id   = aws_api_gateway_rest_api.bogus_api.id
-  stage_name    = "dev"
+  stage_name    = var.stage
 }

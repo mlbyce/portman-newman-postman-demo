@@ -1,6 +1,12 @@
+resource "random_string" "seed" {
+  length = 6
+  special = false
+  upper = false
+}
+
 resource "aws_lambda_function" "postReflect" {
-  filename         = "postReflectIndex.zip"
-  function_name    = "postReflect"
+  filename         = "postReflectIndex-${var.stage}-${random_string.seed.id}.zip"
+  function_name    = "postReflect-${var.stage}-${random_string.seed.id}"
   role             = aws_iam_role.lambda_role.arn
   handler          = "index.handler"
   runtime          = "nodejs16.x"
@@ -8,8 +14,8 @@ resource "aws_lambda_function" "postReflect" {
 }
 
 resource "aws_lambda_function" "getSelf" {
-  filename         = "getSelfIndex.zip"
-  function_name    = "getSelf"
+  filename         = "getSelfIndex-${var.stage}-${random_string.seed.id}.zip"
+  function_name    = "getSelf-${var.stage}-${random_string.seed.id}"
   role             = aws_iam_role.lambda_role.arn
   handler          = "index.handler"
   runtime          = "nodejs16.x"
@@ -17,8 +23,8 @@ resource "aws_lambda_function" "getSelf" {
 }
 
 resource "aws_lambda_function" "getUserById" {
-  filename         = "getUserByIdIndex.zip"
-  function_name    = "getUserById"
+  filename         = "getUserByIdIndex-${var.stage}-${random_string.seed.id}.zip"
+  function_name    = "getUserById-${var.stage}-${random_string.seed.id}"
   role             = aws_iam_role.lambda_role.arn
   handler          = "index.handler"
   runtime          = "nodejs16.x"
@@ -26,8 +32,8 @@ resource "aws_lambda_function" "getUserById" {
 }
 
 resource "aws_lambda_function" "getUserByJwt" {
-  filename         = "getUserByJwtIndex.zip"
-  function_name    = "getUserByJwt"
+  filename         = "getUserByJwtIndex-${var.stage}-${random_string.seed.id}.zip"
+  function_name    = "getUserByJwt-${var.stage}-${random_string.seed.id}"
   role             = aws_iam_role.lambda_role.arn
   handler          = "index.handler"
   runtime          = "nodejs16.x"
@@ -35,49 +41,49 @@ resource "aws_lambda_function" "getUserByJwt" {
 }
 
 resource "aws_lambda_function" "getState" {
-  filename         = "getStateIndex.zip"
-  function_name    = "getState"
+  filename         = "getStateIndex-${var.stage}-${random_string.seed.id}.zip"
+  function_name    = "getState-${var.stage}-${random_string.seed.id}"
   role             = aws_iam_role.lambda_role.arn
   handler          = "index.handler"
   runtime          = "nodejs16.x"
   environment {
     variables = {
-      DDB_TABLE = var.dynamodb_table
+      DDB_TABLE = "${var.dynamodb_table}-${var.stage}-${random_string.seed.id}"
     }
   }
   source_code_hash = data.archive_file.getState_package.output_base64sha256
 }
 
 resource "aws_lambda_function" "postState" {
-  filename         = "postStateIndex.zip"
-  function_name    = "postState"
+  filename         = "postStateIndex-${var.stage}-${random_string.seed.id}.zip"
+  function_name    = "postState-${var.stage}-${random_string.seed.id}"
   role             = aws_iam_role.lambda_role.arn
   handler          = "index.handler"
   runtime          = "nodejs16.x"
   environment {
     variables = {
-      DDB_TABLE = var.dynamodb_table
+      DDB_TABLE = "${var.dynamodb_table}-${var.stage}-${random_string.seed.id}"
     }
   }
   source_code_hash = data.archive_file.postState_package.output_base64sha256
 }
 
 resource "aws_lambda_function" "deleteState" {
-  filename         = "deleteStateIndex.zip"
-  function_name    = "deleteState"
+  filename         = "deleteStateIndex-${var.stage}-${random_string.seed.id}.zip"
+  function_name    = "deleteState-${var.stage}-${random_string.seed.id}"
   role             = aws_iam_role.lambda_role.arn
   handler          = "index.handler"
   runtime          = "nodejs16.x"
   environment {
     variables = {
-      DDB_TABLE = var.dynamodb_table
+      DDB_TABLE = "${var.dynamodb_table}-${var.stage}-${random_string.seed.id}"
     }
   }
   source_code_hash = data.archive_file.deleteState_package.output_base64sha256
 }
 
 resource "aws_iam_role" "lambda_role" {
-  name = "lambda-role"
+  name = "lambda-role-${var.stage}-${random_string.seed.id}"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -167,41 +173,41 @@ resource "aws_lambda_permission" "apigw_lambda_deleteState" {
 data "archive_file" "postReflect_package" {
   type        = "zip"
   source_file = "src/postReflect/dist/index.js"
-  output_path = "postReflectIndex.zip"
+  output_path = "postReflectIndex-${var.stage}-${random_string.seed.id}.zip"
 }
 
 data "archive_file" "getSelf_package" {
   type        = "zip"
   source_file  = "src/getSelf/dist/index.js"
-  output_path = "getSelfIndex.zip"
+  output_path = "getSelfIndex-${var.stage}-${random_string.seed.id}.zip"
 }
 
 data "archive_file" "getUserById_package" {
   type        = "zip"
   source_file = "src/getUserById/dist/index.js"
-  output_path = "getUserByIdIndex.zip"
+  output_path = "getUserByIdIndex-${var.stage}-${random_string.seed.id}.zip"
 }
 
 data "archive_file" "getUserByJwt_package" {
   type        = "zip"
   source_file = "src/getUserByJwt/dist/index.js"
-  output_path = "getUserByJwtIndex.zip"
+  output_path = "getUserByJwtIndex-${var.stage}-${random_string.seed.id}.zip"
 }
 
 data "archive_file" "getState_package" {
   type        = "zip"
   source_file = "src/getState/dist/index.js"
-  output_path = "getStateIndex.zip"
+  output_path = "getStateIndex-${var.stage}-${random_string.seed.id}.zip"
 }
 
 data "archive_file" "postState_package" {
   type        = "zip"
   source_file = "src/postState/dist/index.js"
-  output_path = "postStateIndex.zip"
+  output_path = "postStateIndex-${var.stage}-${random_string.seed.id}.zip"
 }
 
 data "archive_file" "deleteState_package" {
   type        = "zip"
   source_file  = "src/deleteState/dist/index.js"
-  output_path = "deleteStateIndex.zip"
+  output_path = "deleteStateIndex-${var.stage}-${random_string.seed.id}.zip"
 }

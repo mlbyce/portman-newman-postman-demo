@@ -1,11 +1,5 @@
-variable "dynamodb_table" {
-  description = "name of the ddb table"
-  type = string
-  default = "bogus_state"
-}
-
 resource "aws_dynamodb_table" "bogus_state" {
-  name           = var.dynamodb_table
+  name           = "${var.dynamodb_table}-${var.stage}-${random_string.seed.id}"
   billing_mode   = "PAY_PER_REQUEST"
   hash_key       = "userId"
   range_key      = "stateName"

@@ -34,11 +34,23 @@ To run this demo, first deploy the 'Bogus API' with the following process, using
 
 - Connect to a (Sandbox) AWS Profile that you can deploy to safely (i.e. you can run `aws s3 ls`)
 - Build and deploy using [build.sh](build.sh) _(or do the steps in that script manually if you prefer)_.
-  This script builds the Lambdas an executes the Terraform steps to deploy but prompts the user for the final "yes".
-  If you want to go completely auto, just remove the comment for "--auto-approve" on the last line of [build.sh](build.sh)
+  This script builds the Lambdas an executes the Terraform steps to deploy but prompts the user for the final "yes"
+  unless you enter the "-a" commandLine option. The only required option is "-s <STAGE>"... here is the full list of options:
+
+  ./build.sh -s \<STAGE\> -r \<REGION\> -t -a -h
+
+  - -s is the deployment stage: REQUIRED (e.g. -s dev)
+  - -r is the deployment region: Default = us-east-1
+  - -t Build Terraform only (No src build): Default = Build all
+  - -a turns on auto-approve for Terraform Apply: Default = No auto-approve
+  - -h Returns this help message
+
+  So for a normal deployment to **dev**,
+
   ```
-  ./build.sh
+  ./build.sh -s dev
   ```
+
 - Note the output from the deployment:
 
   ```
