@@ -13,16 +13,19 @@ function usage() {
     warn "     Default = Build all"
     warn "  -a turns on auto-approve for Terraform Apply"
     warn "     Default = No auto-approve"
+    warn "  -b is turns on Remote Backend for STAGE / REGION"
+    warn "     Default = Local Backend"
     exit 1;
 }
 
 #DEFAULTS:
 REGION=us-east-1
 
-while getopts ar:s:t option
+while getopts abr:s:t option
 do
   case "${option}" in
     a) AUTO="--auto-approve" ;;
+    b) REMOTE=1 ;;
     r) REGION=${OPTARG} ;;
     s) STAGE=${OPTARG} ;;
     t) NOCODEBUILD=1 ;;
@@ -52,6 +55,13 @@ if [[ -z $NOCODEBUILD ]]; then
     done;
 fi
 
+if [[ $REMOTE ]]
+  then
+    echo "USING REMOTE STATE"
+    sed -i '' -e "s/#{{}}//g" -e "s/{{REGION}}/$REGION/g" -e "s/{{STAGE}}/$STAGE/g" provider.tf
+  else
+    echo "USING LOCAL STATE"
+  fi
 terraform init
 terraform plan -var region=${REGION} -var stage=${STAGE}
 terraform apply -var region=${REGION} -var stage=${STAGE} $AUTO

@@ -1,5 +1,5 @@
 resource "aws_dynamodb_table" "bogus_state" {
-  name           = "${var.dynamodb_table}-${var.stage}-${random_string.seed.id}"
+  name           = "${local.api_state_table}-${local.uniq_stage}"
   billing_mode   = "PAY_PER_REQUEST"
   hash_key       = "userId"
   range_key      = "stateName"

@@ -5,8 +5,8 @@ resource "random_string" "seed" {
 }
 
 resource "aws_lambda_function" "postReflect" {
-  filename         = "postReflectIndex-${var.stage}-${random_string.seed.id}.zip"
-  function_name    = "postReflect-${var.stage}-${random_string.seed.id}"
+  filename         = "postReflectIndex-${local.uniq_stage}.zip"
+  function_name    = "postReflect-${local.uniq_stage}"
   role             = aws_iam_role.lambda_role.arn
   handler          = "index.handler"
   runtime          = "nodejs16.x"
@@ -14,8 +14,8 @@ resource "aws_lambda_function" "postReflect" {
 }
 
 resource "aws_lambda_function" "getSelf" {
-  filename         = "getSelfIndex-${var.stage}-${random_string.seed.id}.zip"
-  function_name    = "getSelf-${var.stage}-${random_string.seed.id}"
+  filename         = "getSelfIndex-${local.uniq_stage}.zip"
+  function_name    = "getSelf-${local.uniq_stage}"
   role             = aws_iam_role.lambda_role.arn
   handler          = "index.handler"
   runtime          = "nodejs16.x"
@@ -23,8 +23,8 @@ resource "aws_lambda_function" "getSelf" {
 }
 
 resource "aws_lambda_function" "getUserById" {
-  filename         = "getUserByIdIndex-${var.stage}-${random_string.seed.id}.zip"
-  function_name    = "getUserById-${var.stage}-${random_string.seed.id}"
+  filename         = "getUserByIdIndex-${local.uniq_stage}.zip"
+  function_name    = "getUserById-${local.uniq_stage}"
   role             = aws_iam_role.lambda_role.arn
   handler          = "index.handler"
   runtime          = "nodejs16.x"
@@ -32,8 +32,8 @@ resource "aws_lambda_function" "getUserById" {
 }
 
 resource "aws_lambda_function" "getUserByJwt" {
-  filename         = "getUserByJwtIndex-${var.stage}-${random_string.seed.id}.zip"
-  function_name    = "getUserByJwt-${var.stage}-${random_string.seed.id}"
+  filename         = "getUserByJwtIndex-${local.uniq_stage}.zip"
+  function_name    = "getUserByJwt-${local.uniq_stage}"
   role             = aws_iam_role.lambda_role.arn
   handler          = "index.handler"
   runtime          = "nodejs16.x"
@@ -41,49 +41,49 @@ resource "aws_lambda_function" "getUserByJwt" {
 }
 
 resource "aws_lambda_function" "getState" {
-  filename         = "getStateIndex-${var.stage}-${random_string.seed.id}.zip"
-  function_name    = "getState-${var.stage}-${random_string.seed.id}"
+  filename         = "getStateIndex-${local.uniq_stage}.zip"
+  function_name    = "getState-${local.uniq_stage}"
   role             = aws_iam_role.lambda_role.arn
   handler          = "index.handler"
   runtime          = "nodejs16.x"
   environment {
     variables = {
-      DDB_TABLE = "${var.dynamodb_table}-${var.stage}-${random_string.seed.id}"
+      DDB_TABLE = "${local.api_state_table}-${local.uniq_stage}"
     }
   }
   source_code_hash = data.archive_file.getState_package.output_base64sha256
 }
 
 resource "aws_lambda_function" "postState" {
-  filename         = "postStateIndex-${var.stage}-${random_string.seed.id}.zip"
-  function_name    = "postState-${var.stage}-${random_string.seed.id}"
+  filename         = "postStateIndex-${local.uniq_stage}.zip"
+  function_name    = "postState-${local.uniq_stage}"
   role             = aws_iam_role.lambda_role.arn
   handler          = "index.handler"
   runtime          = "nodejs16.x"
   environment {
     variables = {
-      DDB_TABLE = "${var.dynamodb_table}-${var.stage}-${random_string.seed.id}"
+      DDB_TABLE = "${local.api_state_table}-${local.uniq_stage}"
     }
   }
   source_code_hash = data.archive_file.postState_package.output_base64sha256
 }
 
 resource "aws_lambda_function" "deleteState" {
-  filename         = "deleteStateIndex-${var.stage}-${random_string.seed.id}.zip"
-  function_name    = "deleteState-${var.stage}-${random_string.seed.id}"
+  filename         = "deleteStateIndex-${local.uniq_stage}.zip"
+  function_name    = "deleteState-${local.uniq_stage}"
   role             = aws_iam_role.lambda_role.arn
   handler          = "index.handler"
   runtime          = "nodejs16.x"
   environment {
     variables = {
-      DDB_TABLE = "${var.dynamodb_table}-${var.stage}-${random_string.seed.id}"
+      DDB_TABLE = "${local.api_state_table}-${local.uniq_stage}"
     }
   }
   source_code_hash = data.archive_file.deleteState_package.output_base64sha256
 }
 
 resource "aws_iam_role" "lambda_role" {
-  name = "lambda-role-${var.stage}-${random_string.seed.id}"
+  name = "lambda-role-${local.uniq_stage}"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -173,41 +173,41 @@ resource "aws_lambda_permission" "apigw_lambda_deleteState" {
 data "archive_file" "postReflect_package" {
   type        = "zip"
   source_file = "src/postReflect/dist/index.js"
-  output_path = "postReflectIndex-${var.stage}-${random_string.seed.id}.zip"
+  output_path = "postReflectIndex-${local.uniq_stage}.zip"
 }
 
 data "archive_file" "getSelf_package" {
   type        = "zip"
   source_file  = "src/getSelf/dist/index.js"
-  output_path = "getSelfIndex-${var.stage}-${random_string.seed.id}.zip"
+  output_path = "getSelfIndex-${local.uniq_stage}.zip"
 }
 
 data "archive_file" "getUserById_package" {
   type        = "zip"
   source_file = "src/getUserById/dist/index.js"
-  output_path = "getUserByIdIndex-${var.stage}-${random_string.seed.id}.zip"
+  output_path = "getUserByIdIndex-${local.uniq_stage}.zip"
 }
 
 data "archive_file" "getUserByJwt_package" {
   type        = "zip"
   source_file = "src/getUserByJwt/dist/index.js"
-  output_path = "getUserByJwtIndex-${var.stage}-${random_string.seed.id}.zip"
+  output_path = "getUserByJwtIndex-${local.uniq_stage}.zip"
 }
 
 data "archive_file" "getState_package" {
   type        = "zip"
   source_file = "src/getState/dist/index.js"
-  output_path = "getStateIndex-${var.stage}-${random_string.seed.id}.zip"
+  output_path = "getStateIndex-${local.uniq_stage}.zip"
 }
 
 data "archive_file" "postState_package" {
   type        = "zip"
   source_file = "src/postState/dist/index.js"
-  output_path = "postStateIndex-${var.stage}-${random_string.seed.id}.zip"
+  output_path = "postStateIndex-${local.uniq_stage}.zip"
 }
 
 data "archive_file" "deleteState_package" {
   type        = "zip"
   source_file  = "src/deleteState/dist/index.js"
-  output_path = "deleteStateIndex-${var.stage}-${random_string.seed.id}.zip"
+  output_path = "deleteStateIndex-${local.uniq_stage}.zip"
 }

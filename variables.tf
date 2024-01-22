@@ -7,11 +7,13 @@ variable "region" {
 variable "stage" {
     type=string
     description = "Deployment stage [dev | stg | test | prd | whatever]"
-    default="dev"
 }
 
-variable "dynamodb_table" {
-  description = "name of the ddb table"
-  type = string
-  default = "bogus_state"
+locals {
+  uniq_stage = "${var.stage}-${random_string.seed.id}"
+  api_state_table = "bogus_state"
+  tf-state-bucket = "bogus-api-tf-state"
+  tf-state-table  = "bogus-api-tf-locks"
+  tf-state-key  = "bogus-api/${var.stage}/tfstate"
 }
+
