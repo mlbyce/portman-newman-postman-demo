@@ -182,3 +182,8 @@ When you are all done having fun with this stack, remember to destroy the lot wi
 # Note that the region variable is required if deployed to any region other than the default (us-east-1)
 terraform destroy -var region=${REGION}
 ```
+
+### Infrastructure model
+![Infrastructure main model](.infragenie/infrastructure_main_model.svg)
+
+---
