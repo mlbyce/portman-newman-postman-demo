@@ -182,3 +182,5 @@ When you are all done having fun with this stack, remember to destroy the lot wi
 # Note that the region variable is required if deployed to any region other than the default (us-east-1)
 terraform destroy -var region=${REGION}
 ```
+### Infrastructure model
+![mlbyce_newman-portman-demo](https://github.com/mlbyce/newman-portman-demo/assets/173192552/25ac8511-138d-4820-a0e5-86efbaaa6137)
